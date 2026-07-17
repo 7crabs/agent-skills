@@ -15,6 +15,8 @@
 | `critique-panel` | 複数の批判的視点から並行レビューして統合する |
 | `cve-triage` | CVE・アドバイザリの現リポジトリへの影響有無を判定する |
 | `nix-add` | home-manager 管理の dotfiles に Nix パッケージを追加する |
+| `scaffold-worklog` | 意思決定ログ＋事実台帳(FACTS/DECISIONS/OPEN_QUESTIONS/log)の作業構造を生成する |
+| `tech-research` | 技術調査を、観点の抜け漏れと「未確認なのに断言」を防ぐ規律に沿って実施する |
 
 ## 新しいPCでのセットアップ
 
@@ -58,7 +60,7 @@ gh skill install 7crabs/agent-skills --all --pin v0.2.0 --agent claude-code --sc
 ```
 
 - `--pin` した skill は `gh skill update` からスキップされる。`--unpin` で pin を解除できる。
-- 現在の最新タグ: `v0.1.0`
+- 現在の最新タグ: `v0.2.0`
 
 ## 構成
 
@@ -70,7 +72,12 @@ skills/
 ├── claude-actions-doctor/SKILL.md
 ├── critique-panel/SKILL.md
 ├── cve-triage/SKILL.md
-└── nix-add/SKILL.md
+├── nix-add/SKILL.md
+├── scaffold-worklog/
+│   ├── SKILL.md
+│   ├── README.md
+│   └── scripts/scaffold-worklog.sh
+└── tech-research/SKILL.md
 ```
 
 ## メンテナンス
