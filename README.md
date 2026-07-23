@@ -60,7 +60,7 @@ gh skill install 7crabs/agent-skills --all --pin v0.2.0 --agent claude-code --sc
 ```
 
 - `--pin` した skill は `gh skill update` からスキップされる。`--unpin` で pin を解除できる。
-- 現在の最新タグ: `v0.2.0`
+- 現在の最新タグ: `v0.4.0`
 
 ## 構成
 
