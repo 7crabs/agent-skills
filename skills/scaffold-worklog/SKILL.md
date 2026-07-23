@@ -1,6 +1,6 @@
 ---
 name: scaffold-worklog
-description: 意思決定ログ＋事実台帳(FACTS/DECISIONS/OPEN_QUESTIONS/log)の作業構造を生成する。ユーザーが「作業ログの構造を作って」「worklog を初期化して」等を依頼したとき、または新しい調査・企画プロジェクトのディレクトリを立ち上げるときに使う。
+description: 意思決定ログ＋事実台帳＋タスク管理(FACTS/DECISIONS/OPEN_QUESTIONS/PLAN/WORKPLAN/log)の作業構造を生成する。ユーザーが「作業ログの構造を作って」「worklog を初期化して」等を依頼したとき、または新しい調査・企画プロジェクトのディレクトリを立ち上げるときに使う。
 argument-hint: "[new|existing] [プロジェクト名]"
 allowed-tools: Bash(~/.claude/skills/scaffold-worklog/scripts/scaffold-worklog.sh:*), Read, Edit
 ---
@@ -20,6 +20,7 @@ allowed-tools: Bash(~/.claude/skills/scaffold-worklog/scripts/scaffold-worklog.s
 3. **生成後の最小カスタマイズ**（ここだけ手で埋める）:
    - **CLAUDE.md** 冒頭: プロジェクトの目的・ゴール・期限を1〜2行で。existing の場合は `<!-- worklog-protocol -->` 節が追記済みなので、その上のビルド/テスト情報が薄ければ `/init` を勧める。
    - **PLAN.md** の「現在地」と Phase 行、**DECISIONS.md** の「★北極星」を、分かっている範囲でユーザーと相談しながら埋める。空欄プレースホルダのまま放置しない。
+   - **WORKPLAN.md** の「①直近のゴール」を最低1つ埋める。タスクリストが空のまま生成を終えない。
 
 4. 生成したファイル一覧と、次に着手すべき1ファイル（通常は PLAN.md の現在地）を簡潔に報告する。
 

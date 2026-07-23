@@ -1,6 +1,6 @@
 # scaffold-worklog
 
-「意思決定ログ＋事実台帳」の作業構造を生成する Claude Code skill。使い捨てセッションでも CLAUDE.md 起点で再開できるよう、決定(DECISIONS)・事実(FACTS)・未確定(OPEN_QUESTIONS)・申し送り(log) を積み重ねる構造を作る。
+「意思決定ログ＋事実台帳＋タスク管理」の作業構造を生成する Claude Code skill。使い捨てセッションでも CLAUDE.md 起点で再開できるよう、決定(DECISIONS)・事実(FACTS)・未確定(OPEN_QUESTIONS)・計画とToDo(PLAN/WORKPLAN)・申し送り(log) を積み重ねる構造を作る。
 
 ## 中身
 - `SKILL.md` — skill 本体（`/scaffold-worklog` で呼べる。モード判定と生成後カスタマイズの手順）。

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # scaffold-worklog.sh — 意思決定ログ＋事実台帳の作業構造を生成する
 #
-# 「決定(DECISIONS)・事実(FACTS)・未確定(OPEN_QUESTIONS)・申し送り(log)」を積み重ね、
+# 「決定(DECISIONS)・事実(FACTS)・未確定(OPEN_QUESTIONS)・計画とToDo(PLAN/WORKPLAN)・申し送り(log)」を積み重ね、
 # 使い捨てセッションでも CLAUDE.md 起点で再開できる構造を作る。
 #
 # 使い方:
@@ -240,7 +240,7 @@ EOF
 
 ## 再開プロトコル（セッションを使い捨てにする）
 - **開始時**：CLAUDE.md（自動）→ `PLAN.md`（現在フェーズ）→ 必要ファイルだけ読む。
-- **終了時（トピック完了＝セッションの区切り）**：`PLAN.md`の状態更新／新与件→`FACTS.md`／決定→`DECISIONS.md`／残論点→`OPEN_QUESTIONS.md`／`log/`に申し送り1段落。
+- **終了時（トピック完了＝セッションの区切り）**：`PLAN.md`の状態更新／`WORKPLAN.md`のチェック更新（完了は[x]、新タスク追記）／新与件→`FACTS.md`／決定→`DECISIONS.md`／残論点→`OPEN_QUESTIONS.md`／`log/`に申し送り1段落。
 - 1トピック終わったら**新セッションを開き、CLAUDE.md起点で続きから**。
 
 ## 鉄則
@@ -277,7 +277,7 @@ EOF
 | `worklog/PLAN.md` / `worklog/WORKPLAN.md` | 全体フェーズ / 実行ToDo。 |
 | `worklog/research/` `worklog/log/` | 調査メモ / セッション申し送り。 |
 
-**鉄則**：①過去調査を再実行せず `FACTS`/`DECISIONS` を正とする ②事実と決定を混ぜない ③提案を勝手にDECISIONSへ昇格しない（合意後に昇格） ④終了時に PLAN更新・新事実→FACTS・決定→DECISIONS・残論点→OPEN_QUESTIONS・`log/` に申し送り1段落。
+**鉄則**：①過去調査を再実行せず `FACTS`/`DECISIONS` を正とする ②事実と決定を混ぜない ③提案を勝手にDECISIONSへ昇格しない（合意後に昇格） ④終了時に PLAN更新・WORKPLANのチェック更新（完了は[x]、新タスク追記）・新事実→FACTS・決定→DECISIONS・残論点→OPEN_QUESTIONS・`log/` に申し送り1段落。
 EOF
 
   if [ -f "$ROOT/CLAUDE.md" ]; then
