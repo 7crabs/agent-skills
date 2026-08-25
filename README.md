@@ -11,6 +11,7 @@
 
 | スキル | 概要 |
 | --- | --- |
+| `audience-writing` | 他者向け成果物で想定読者を確定し、セッション内文脈を読者に漏らさない執筆原則 |
 | `claude-actions-doctor` | Claude Code を GitHub Actions 上で動かすワークフローの点検手順 |
 | `critique-panel` | 複数の批判的視点から並行レビューして統合する |
 | `cve-triage` | CVE・アドバイザリの現リポジトリへの影響有無を判定する |
