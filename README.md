@@ -1,6 +1,6 @@
 # agent-skills
 
-自作の [Agent Skills](https://agentskills.io/) を集約した private リポジトリ。
+自作の [Agent Skills](https://agentskills.io/) を集約したリポジトリ（**public**。業務固有の情報は書かない）。
 複数マシン間で `gh skill`（GitHub CLI）を使って配布・更新する。
 
 > **注意:** `gh skill` は preview 機能で、フラグや既定動作は予告なく変わり得る。
@@ -21,7 +21,7 @@
 
 ## 新しいPCでのセットアップ
 
-1. GitHub CLI を用意（未認証なら `gh auth login`）。private リポジトリなので認証必須。
+1. GitHub CLI を用意（未認証なら `gh auth login`）。
 2. Claude Code のユーザースコープ（`~/.claude/skills/`、全プロジェクト共通）へ、
    **タグを明示（`--pin`）して**インストールする:
 
@@ -61,7 +61,7 @@ gh skill install 7crabs/agent-skills --all --pin v0.2.0 --agent claude-code --sc
 ```
 
 - `--pin` した skill は `gh skill update` からスキップされる。`--unpin` で pin を解除できる。
-- 現在の最新タグ: `v0.5.0`
+- 現在の最新タグ: `v0.5.1`
 
 ## 構成
 
