@@ -5,9 +5,12 @@
 # 使い方:
 #   transcript.sh now                        現在時刻（UTC, ISO 8601）。HANDOFF.md の「最終更新」に使う
 #   transcript.sh list                       セッション一覧（ID・最初と最後の時刻・最初の発言）
-#   transcript.sh show [--since TS] [--user-only]
-#       --since TS   この時刻（UTC, ISO 8601）より後の発言だけ
-#       --user-only  ユーザーの発言だけ（既定はユーザーと Claude の本文。ツールの入出力は含めない）
+#   transcript.sh show [--since TS] [--session ID] [--user-only]
+#       --since TS    この時刻（UTC, ISO 8601）より後の発言だけ
+#       --session ID  このセッションだけ（既定はこのディレクトリの全セッション）
+#       --user-only   ユーザーの発言だけ（既定はユーザーと Claude の本文。ツールの入出力は含めない）
+#   transcript.sh find TEXT                  全ディレクトリの会話記録から TEXT を含むセッションを探す
+#                                            （別のディレクトリで作業してしまったとき用）
 #
 # 記録の場所はカレントディレクトリから決まる。別の場所なら CLAUDE_TRANSCRIPT_DIR で指定する。
 
@@ -44,6 +47,17 @@ def is_claude:
 '
 
 case "$cmd" in
+  find)
+    text="${1:-}"; [ -n "$text" ] || { echo "find には検索する文字列が要る" >&2; exit 2; }
+    grep -lF -- "$text" "$HOME"/.claude/projects/*/*.jsonl 2>/dev/null | while read -r f; do
+      jq -r -s "$JQ_COMMON"'
+        [ .[] | select(is_human) ] as $u
+        | select($u | length > 0)
+        | "\(input_filename)\t\($u[0].timestamp)\t\($u[-1].timestamp)\t\($u[0] | user_text | gsub("\\s+"; " ") | .[0:60])"
+      ' "$f"
+    done
+    echo "（読むときは CLAUDE_TRANSCRIPT_DIR=<ディレクトリ> と --session <ID> を付けて show する）" >&2
+    ;;
   list)
     for f in $(files); do
       jq -r -s "$JQ_COMMON"'
@@ -54,15 +68,22 @@ case "$cmd" in
     done
     ;;
   show)
-    since=""; user_only=0
+    since=""; user_only=0; session=""
+
     while [ $# -gt 0 ]; do
       case "$1" in
         --since) since="${2:-}"; shift 2 ;;
+        --session) session="${2:-}"; shift 2 ;;
         --user-only) user_only=1; shift ;;
         *) echo "unknown arg: $1" >&2; exit 2 ;;
       esac
     done
-    for f in $(files); do
+    targets="$(files)"
+    if [ -n "$session" ]; then
+      targets="$DIR/$session.jsonl"
+      [ -f "$targets" ] || { echo "セッションが見つからない: $targets" >&2; exit 1; }
+    fi
+    for f in $targets; do
       jq -r --arg since "$since" --argjson uo "$user_only" "$JQ_COMMON"'
         select(.timestamp != null and .timestamp > $since)
         | if is_human then "\n[\(.timestamp)] USER (\(.sessionId)):\n\(user_text)"
@@ -72,5 +93,5 @@ case "$cmd" in
     done
     ;;
   *)
-    sed -n '2,13p' "$0"; exit 2 ;;
+    sed -n '2,17p' "$0"; exit 2 ;;
 esac
