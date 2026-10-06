@@ -15,8 +15,8 @@
 | `claude-actions-doctor` | Claude Code を GitHub Actions 上で動かすワークフローの点検手順 |
 | `critique-panel` | 複数の批判的視点から並行レビューして統合する |
 | `cve-triage` | CVE・アドバイザリの現リポジトリへの影響有無を判定する |
+| `handoff` | 複数セッションに分けて進めるとき、区切りに会話記録から引き継ぎ資料を書く |
 | `nix-add` | home-manager 管理の dotfiles に Nix パッケージを追加する |
-| `scaffold-worklog` | 意思決定ログ＋事実台帳(FACTS/DECISIONS/OPEN_QUESTIONS/log)の作業構造を生成する |
 | `talk-design` | 勉強会・発表の筋（聞き手・答える問い・持ち帰り・問いの連鎖）をスライド作成前に段階的に設計する |
 | `tech-research` | 技術調査を、観点の抜け漏れと「未確認なのに断言」を防ぐ規律に沿って実施する |
 
@@ -74,11 +74,10 @@ skills/
 ├── claude-actions-doctor/SKILL.md
 ├── critique-panel/SKILL.md
 ├── cve-triage/SKILL.md
-├── nix-add/SKILL.md
-├── scaffold-worklog/
+├── handoff/
 │   ├── SKILL.md
-│   ├── README.md
-│   └── scripts/scaffold-worklog.sh
+│   └── scripts/transcript.sh
+├── nix-add/SKILL.md
 └── tech-research/SKILL.md
 ```
 
