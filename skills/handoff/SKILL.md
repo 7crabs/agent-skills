@@ -2,7 +2,7 @@
 name: handoff
 description: 複数のセッションに分けて進めるプロジェクトで、セッションの区切りに引き継ぎ資料（HANDOFF.md・FACTS.md・DECISIONS.md）を会話記録から書く。ユーザーが /handoff と明示したときだけ使う。Claude から使うことを提案しない。
 argument-hint: '[since <ISO8601>]'
-allowed-tools: Bash(~/.claude/skills/handoff/scripts/transcript.sh:*), Read, Edit, Write, Agent
+allowed-tools: Bash(bash ~/.claude/skills/handoff/scripts/transcript.sh:*), Read, Edit, Write, Agent
 ---
 
 # 引き継ぎ資料を書く
@@ -22,9 +22,9 @@ allowed-tools: Bash(~/.claude/skills/handoff/scripts/transcript.sh:*), Read, Edi
 
 ## 手順
 
-1. **範囲を決める**：`HANDOFF.md` の「最終更新」より後の会話を対象にする。無ければ全部。引数 `since` があればそれを使う。今の時刻を `transcript.sh now` で控えておく
+1. **範囲を決める**：`HANDOFF.md` の「最終更新」より後の会話を対象にする。無ければ全部。引数 `since` があればそれを使う。今の時刻を `bash ~/.claude/skills/handoff/scripts/transcript.sh now` で控えておく。以下 `transcript.sh` は常にこの形（`bash` + フルパス）で呼ぶ。インストール時に実行権限が付かないため
 2. **会話記録を読む**：記録の読み込みはサブエージェントに任せ、メインのコンテキストを使わない。サブエージェントには次を渡す
-   - `~/.claude/skills/handoff/scripts/transcript.sh show --since <TS>` で会話を読む（決定の引用には `--user-only`）
+   - `bash ~/.claude/skills/handoff/scripts/transcript.sh show --since <TS>` で会話を読む（決定の引用には `--user-only`）
    - 今の `HANDOFF.md` / `FACTS.md` / `DECISIONS.md` / `CLAUDE.md` の目的節
    - 下の「書き込みのルール」
    - 返してほしいもの：各ファイルへの追記・差し替えの案と、決定ごとの引用元（時刻とセッション ID）
@@ -35,7 +35,7 @@ allowed-tools: Bash(~/.claude/skills/handoff/scripts/transcript.sh:*), Read, Edi
    - 聞きたいこと（目的が空欄ならここで聞き、答えをそのまま書く）
 
 会話記録が見つからない、または足りないとき：
-- 別のディレクトリで作業した可能性がある。`transcript.sh find <プロジェクトのディレクトリ名など>` で探し、見つかったセッションをユーザーに見せて、対象にするかを確かめる。対象にするなら `CLAUDE_TRANSCRIPT_DIR=<ディレクトリ> transcript.sh show --session <ID>` で読む
+- 別のディレクトリで作業した可能性がある。`transcript.sh find <プロジェクトのディレクトリ名など>` で探し、見つかったセッションをユーザーに見せて、対象にするかを確かめる。対象にするなら `transcript.sh --dir <ディレクトリ> show --session <ID>` で読む
 - それでも無ければ（別の PC で作業した等）、その旨を伝え、今のコンテキストにある分だけで書くかをユーザーに選んでもらう
 
 ## 書き込みのルール

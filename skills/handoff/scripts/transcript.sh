@@ -2,7 +2,9 @@
 # transcript.sh — Claude Code の会話記録（~/.claude/projects/<slug>/*.jsonl）から、
 # カレントディレクトリで行った会話を読みやすい形で抜き出す。jq が必要。
 #
-# 使い方:
+# 使い方（実行権限が付かない環境があるので bash で呼ぶ）:
+#   bash transcript.sh [--dir DIR] <サブコマンド>
+#       --dir DIR     会話記録のディレクトリ（既定はカレントディレクトリから決まる場所）
 #   transcript.sh now                        現在時刻（UTC, ISO 8601）。HANDOFF.md の「最終更新」に使う
 #   transcript.sh list                       セッション一覧（ID・最初と最後の時刻・最初の発言）
 #   transcript.sh show [--since TS] [--session ID] [--user-only]
@@ -11,12 +13,11 @@
 #       --user-only   ユーザーの発言だけ（既定はユーザーと Claude の本文。ツールの入出力は含めない）
 #   transcript.sh find TEXT                  全ディレクトリの会話記録から TEXT を含むセッションを探す
 #                                            （別のディレクトリで作業してしまったとき用）
-#
-# 記録の場所はカレントディレクトリから決まる。別の場所なら CLAUDE_TRANSCRIPT_DIR で指定する。
 
 set -euo pipefail
 
-DIR="${CLAUDE_TRANSCRIPT_DIR:-$HOME/.claude/projects/$(pwd | sed 's/[^A-Za-z0-9]/-/g')}"
+DIR="$HOME/.claude/projects/$(pwd | sed 's/[^A-Za-z0-9]/-/g')"
+if [ "${1:-}" = "--dir" ]; then DIR="${2:-}"; shift 2; fi
 
 cmd="${1:-}"; shift || true
 
@@ -25,7 +26,7 @@ if [ "$cmd" = "now" ]; then
   exit 0
 fi
 
-[ -d "$DIR" ] || { echo "会話記録が見つからない: $DIR（CLAUDE_TRANSCRIPT_DIR で指定できる）" >&2; exit 1; }
+[ -d "$DIR" ] || { echo "会話記録が見つからない: $DIR（--dir で指定できる）" >&2; exit 1; }
 command -v jq >/dev/null || { echo "jq が必要" >&2; exit 1; }
 
 # 古い順に並べた記録ファイル
@@ -56,7 +57,7 @@ case "$cmd" in
         | "\(input_filename)\t\($u[0].timestamp)\t\($u[-1].timestamp)\t\($u[0] | user_text | gsub("\\s+"; " ") | .[0:60])"
       ' "$f"
     done
-    echo "（読むときは CLAUDE_TRANSCRIPT_DIR=<ディレクトリ> と --session <ID> を付けて show する）" >&2
+    echo "（読むときは --dir <ディレクトリ> show --session <ID>）" >&2
     ;;
   list)
     for f in $(files); do
@@ -93,5 +94,5 @@ case "$cmd" in
     done
     ;;
   *)
-    sed -n '2,17p' "$0"; exit 2 ;;
+    sed -n '2,18p' "$0"; exit 2 ;;
 esac
