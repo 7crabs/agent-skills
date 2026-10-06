@@ -7,11 +7,12 @@
 #       --workdir PATH  この作業ディレクトリで行った会話を読む（既定はカレントディレクトリ）
 #       --dir DIR       会話記録のディレクトリを直接指定する（find の結果を読むとき）
 #   transcript.sh now                        現在時刻（UTC, ISO 8601）。HANDOFF.md の「最終更新」に使う
-#   transcript.sh list                       セッション一覧（ID・最初と最後の時刻・最初の発言）
+#   transcript.sh list                       このディレクトリのセッション一覧（最後の発言・タイトル・作業ディレクトリ・ID・最初の発言）
 #   transcript.sh show [--since TS] [--session ID] [--user-only]
 #       --since TS    この時刻（UTC, ISO 8601）より後の発言だけ
 #       --session ID  このセッションだけ（既定はこのディレクトリの全セッション）
 #       --user-only   ユーザーの発言だけ（既定はユーザーと Claude の本文。ツールの入出力は含めない）
+#   transcript.sh recent [N]                 全ディレクトリの最近のセッション N 件（既定 20）。ユーザーに選んでもらうとき用
 #   transcript.sh find TEXT                  全ディレクトリの会話記録から TEXT を含むセッションを探す
 #                                            （別のディレクトリで作業してしまったとき用）
 
@@ -48,6 +49,11 @@ def is_human:
   and (user_text | test("^\\s*(<command-|<local-command|<system-reminder|<task-notification|\\[Request interrupted)") | not);
 def claude_text:
   [.message.content[]? | select(.type == "text") | .text] | join("\n");
+def summary($u):
+  ([ .[] | select(.type == "custom-title") | .customTitle ] | last) as $ct
+  | ([ .[] | select(.type == "ai-title") | .aiTitle ] | last) as $at
+  | ([ .[] | select(.cwd != null) | .cwd ] | first) as $cwd
+  | "\($u[-1].timestamp)\t\($ct // $at // "-")\t\($cwd // "-")\t\(input_filename | split("/") | last | rtrimstr(".jsonl"))\t\($u[0] | user_text | gsub("\\s+"; " ") | .[0:40])";
 def is_claude:
   .type == "assistant" and (.isSidechain | not) and (claude_text | length > 0);
 '
@@ -59,17 +65,28 @@ case "$cmd" in
       jq -r -s "$JQ_COMMON"'
         [ .[] | select(is_human) ] as $u
         | select($u | length > 0)
-        | "\(input_filename)\t\($u[0].timestamp)\t\($u[-1].timestamp)\t\($u[0] | user_text | gsub("\\s+"; " ") | .[0:60])"
+        | "\(input_filename | split("/") | .[-2])\t" + summary($u)
       ' "$f"
     done
-    echo "（読むときは --dir <ディレクトリ> show --session <ID>）" >&2
+    echo "（列: 記録のディレクトリ名 / 最後の発言 / タイトル / 作業ディレクトリ / セッション ID / 最初の発言。読むときは --dir ~/.claude/projects/<記録のディレクトリ名> show --session <ID>）" >&2
+    ;;
+  recent)
+    n="${1:-20}"
+    ls -t "$HOME"/.claude/projects/*/*.jsonl 2>/dev/null | head -n "$n" | while read -r f; do
+      jq -r -s "$JQ_COMMON"'
+        [ .[] | select(is_human) ] as $u
+        | select($u | length > 0)
+        | summary($u)
+      ' "$f"
+    done | sort -r
+    echo "（列: 最後の発言 / タイトル / 作業ディレクトリ / セッション ID / 最初の発言）" >&2
     ;;
   list)
     for f in $(files); do
       jq -r -s "$JQ_COMMON"'
         [ .[] | select(is_human) ] as $u
         | select($u | length > 0)
-        | "\(input_filename | split("/") | last | rtrimstr(".jsonl"))\t\($u[0].timestamp)\t\($u[-1].timestamp)\t\($u[0] | user_text | gsub("\\s+"; " ") | .[0:60])"
+        | summary($u)
       ' "$f"
     done
     ;;
@@ -99,5 +116,5 @@ case "$cmd" in
     done
     ;;
   *)
-    sed -n '2,19p' "$0"; exit 2 ;;
+    sed -n '2,20p' "$0"; exit 2 ;;
 esac
