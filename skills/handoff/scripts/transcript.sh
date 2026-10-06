@@ -3,8 +3,9 @@
 # カレントディレクトリで行った会話を読みやすい形で抜き出す。jq が必要。
 #
 # 使い方（実行権限が付かない環境があるので bash で呼ぶ）:
-#   bash transcript.sh [--dir DIR] <サブコマンド>
-#       --dir DIR     会話記録のディレクトリ（既定はカレントディレクトリから決まる場所）
+#   bash transcript.sh [--workdir PATH | --dir DIR] <サブコマンド>
+#       --workdir PATH  この作業ディレクトリで行った会話を読む（既定はカレントディレクトリ）
+#       --dir DIR       会話記録のディレクトリを直接指定する（find の結果を読むとき）
 #   transcript.sh now                        現在時刻（UTC, ISO 8601）。HANDOFF.md の「最終更新」に使う
 #   transcript.sh list                       セッション一覧（ID・最初と最後の時刻・最初の発言）
 #   transcript.sh show [--since TS] [--session ID] [--user-only]
@@ -16,8 +17,12 @@
 
 set -euo pipefail
 
-DIR="$HOME/.claude/projects/$(pwd | sed 's/[^A-Za-z0-9]/-/g')"
-if [ "${1:-}" = "--dir" ]; then DIR="${2:-}"; shift 2; fi
+slug() { printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g'; }
+DIR="$HOME/.claude/projects/$(slug "$(pwd)")"
+case "${1:-}" in
+  --workdir) DIR="$HOME/.claude/projects/$(slug "$(cd "${2:-}" && pwd)")"; shift 2 ;;
+  --dir)     DIR="${2:-}"; shift 2 ;;
+esac
 
 cmd="${1:-}"; shift || true
 
@@ -94,5 +99,5 @@ case "$cmd" in
     done
     ;;
   *)
-    sed -n '2,18p' "$0"; exit 2 ;;
+    sed -n '2,19p' "$0"; exit 2 ;;
 esac
