@@ -17,6 +17,7 @@
 | `cve-triage` | CVE・アドバイザリの現リポジトリへの影響有無を判定する |
 | `handoff` | 複数セッションに分けて進めるとき、区切りに会話記録から引き継ぎ資料を書く |
 | `nix-add` | home-manager 管理の dotfiles に Nix パッケージを追加する |
+| `storage-cleanup` | macOS のストレージを分析し、再生成できるものから順に掃除する（レポート・削除スクリプト付き） |
 | `talk-design` | 勉強会・発表の筋（聞き手・答える問い・持ち帰り・問いの連鎖）をスライド作成前に段階的に設計する |
 | `tech-research` | 技術調査を、観点の抜け漏れと「未確認なのに断言」を防ぐ規律に沿って実施する |
 
@@ -78,6 +79,11 @@ skills/
 │   ├── SKILL.md
 │   └── scripts/transcript.sh
 ├── nix-add/SKILL.md
+├── storage-cleanup/
+│   ├── SKILL.md
+│   ├── config.example
+│   ├── references/pitfalls.md
+│   └── scripts/{storage-report.sh,storage-clean.sh,lib.sh}
 └── tech-research/SKILL.md
 ```
 

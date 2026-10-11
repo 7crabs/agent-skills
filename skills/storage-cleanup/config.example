@@ -1,0 +1,19 @@
+# storage-cleanup の設定。~/.config/storage-cleanup/config に置く（bash として source される）
+
+# ビルド成果物を探すディレクトリ（直下の各ディレクトリを 1 プロジェクトとみなす）
+SC_PROJECT_ROOTS=("$HOME/projects")
+
+# 削除対象から外すプロジェクト名（glob 可）
+SC_EXCLUDE=()
+
+# この日数以上、成果物以外のファイルが更新されていないプロジェクトを削除候補にする
+SC_STALE_DAYS=30
+
+# nix-collect-garbage --delete-older-than に渡す期間
+SC_NIX_KEEP=30d
+
+# storage-report.sh --notify で通知を出す空き容量のしきい値（GB）
+SC_MIN_FREE_GB=50
+
+# レポートの保存先
+SC_REPORT_DIR="$HOME/.local/state/storage-cleanup/reports"
